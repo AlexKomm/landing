@@ -1,0 +1,16 @@
+export { default as ClientLogos } from './ClientLogos';
+export { default as Hero } from './Hero';
+export { default as PopularFormats } from './PopularFormats';
+export { default as SaleOffers } from './SaleOffers';
+export { default as SaleOffersGallery } from './SaleOffersGallery';
+export { default as SaleOffersSearchForm } from './SaleOffersSearchForm';
+export { default as Stats } from './Stats';
+export { default as Steps } from './Steps';
+export { default as FoodsSlider } from './FoodsSlider';
+export { default as ServicesSlider } from './ServicesSlider';
+export { default as LocationsSlider } from './LocationsSlider';
+export { default as TopPartnersSlider } from './TopPartnersSlider';
+export { default as FeedbackSlider } from './FeedbackSlider';
+export { default as Body } from './Body';
+export { default as ShareLinks } from './ShareLinks';
+export { default as HeroOrderForm } from './HeroOrderForm';
