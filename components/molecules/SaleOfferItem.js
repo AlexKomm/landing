@@ -73,17 +73,35 @@ SaleOfferHeader.propTypes = {
   photo: PropTypes.string.isRequired,
 };
 
+const getDiscount = (price, cost) => (price < cost ? Math.round(((cost - price) / cost) * 100) : 0);
+
+const DiscountBadge = styled(Card)`
+  display: inline-block;
+`;
+
 const SaleOfferItem = ({ offer, ...props }) => {
+  const offerDiscount = offer.cost && offer.price ? getDiscount(offer.price, offer.cost) : 0;
+
   return (
     <Card variant="white" borderRadius={3} {...props}>
       <SaleOfferHeader title={offer.title} photo={offer.photo} path={offer.path} />
       <Flex p={3} alignItems="center" justifyContent="space-between">
         <Box>
-          <Numeric fontWeight="700" fontSize={3} value={offer.price} />
-          <Rating rating={offer.rating} mr={2} />
-          <Text as="span" color="lightgrey" fontSize={0}>
-            {offer.feedbackCount} {formatPlural(offer.feedbackCount, 'отзыв', 'отзыва', 'отзывов')}
-          </Text>
+          <Flex alignItems="center">
+            <Numeric mr={2} fontWeight="700" fontSize={3} value={offer.price} />
+            {offerDiscount && (
+              <DiscountBadge p={1} borderRadius={1} color="white" backgroundColor="error">
+                -{offerDiscount}%
+              </DiscountBadge>
+            )}
+          </Flex>
+          <Flex alignItems="center">
+            <Rating rating={parseFloat(offer.rating, 10)} mr={2} />
+            <Text as="span" color="lightgrey" fontSize={0}>
+              {offer.feedbackCount}{' '}
+              {formatPlural(offer.feedbackCount, 'отзыв', 'отзыва', 'отзывов')}
+            </Text>
+          </Flex>
         </Box>
         <Button as="a" variant="primary" borderRadius={6} href="#foobar">
           Смотреть

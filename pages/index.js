@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Error from 'next/error';
-import { Card } from 'rebass';
+import Head from 'next/head';
+import { Text, Card } from 'rebass';
 import { CurrentUserContext } from '../helpers/withCurrentUser';
 import {
   Hero,
@@ -18,14 +19,36 @@ import {
   Body,
   ShareLinks,
   HeroOrderForm,
+  LandingEdit,
 } from '../components/landing';
 
-import { Header, FooterNav, Modal, OrderForm } from '../components/organisms';
+import {
+  Header,
+  FooterNav,
+  Modal,
+  OrderForm,
+  Breadcrumbs,
+  withFooterMenuTrail,
+} from '../components/organisms';
 
 import { Container } from '../components/base';
 
 import * as landingApi from '../api/landing';
 import { pageShape } from '../utils/propTypes';
+
+const getCurrentPath = ctx => {
+  let { query: { path } = {} } = ctx || {};
+
+  if (!path) {
+    path = window.location.pathname;
+  }
+
+  if (path.indexOf('/') !== 0) {
+    path = `/${path}`;
+  }
+
+  return path;
+};
 
 class HomePage extends React.Component {
   state = {
@@ -36,8 +59,11 @@ class HomePage extends React.Component {
   static async getInitialProps(ctx) {
     let initialProps = {
       page: {},
+      currentPath: getCurrentPath(ctx),
       domain: { id: 'default' },
       statusCode: 404,
+      mainNav: [],
+      footerMenu: [],
     };
 
     if (ctx && ctx.res) {
@@ -74,11 +100,11 @@ class HomePage extends React.Component {
     // }
 
     try {
-      const pageData = await landingApi.getPage(ctx);
+      const pageData = await landingApi.getPage(ctx, getCurrentPath(ctx));
 
       initialProps = { ...initialProps, ...pageData };
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
     }
 
     return initialProps;
@@ -91,9 +117,8 @@ class HomePage extends React.Component {
       domain,
       publicOccasions,
       currentUser,
-      navTree,
       mainNav,
-      saleOffers,
+      footerMenu,
     } = this.props;
 
     const { openModalForm, heroValues } = this.state;
@@ -110,8 +135,28 @@ class HomePage extends React.Component {
 
     return (
       <CurrentUserContext.Provider value={currentUser}>
+        <Head>
+          {page.meta.map(metaItem => {
+            const TagName = metaItem.tag;
+            return <TagName key={JSON.stringify(metaItem.attributes)} {...metaItem.attributes} />;
+          })}
+        </Head>
+
         <Header mainNav={mainNav} onCreateOrderButtonClick={onCreateOrderButtonClick} />
-        <Hero image={page.heroImage} title={page.heroTitle} subtitle={page.heroSubtitle}>
+        <Hero
+          top={() => (
+            <>
+              {page.breadcrumbs && <Breadcrumbs mb={3} links={page.breadcrumbs} />}
+              <Text mb={3} as="h1" fontSize={0}>
+                {page.title}
+              </Text>
+              <LandingEdit mb={4} page={page} />
+            </>
+          )}
+          image={page.heroImage}
+          title={page.heroTitle}
+          subtitle={page.heroSubtitle}
+        >
           <HeroOrderForm
             id="heroOrderForm"
             occasionsList={publicOccasions}
@@ -125,10 +170,7 @@ class HomePage extends React.Component {
           <ClientLogos />
         </Hero>
         <Stats />
-        <SaleOffers
-          offers={saleOffers}
-          initialValues={{ city: domain.city ? domain.city.name : 'Москва' }}
-        />
+        <SaleOffers initialValues={{ city: domain.city ? domain.city.name : 'Москва' }} />
         {page.formats && (
           <PopularFormats
             onCreateOrderButtonClick={onCreateOrderButtonClick}
@@ -147,7 +189,7 @@ class HomePage extends React.Component {
         </Container>
         <ShareLinks />
         <Card as="footer" variant="green" pt={5}>
-          <FooterNav tree={navTree} />
+          <FooterNav tree={footerMenu} />
         </Card>
         <Modal
           width={withCatalogButton ? 1200 : 500}

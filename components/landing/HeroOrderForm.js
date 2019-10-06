@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import styled from 'styled-components';
 import { Flex, Card, Text, Button } from 'rebass';
 import { Select, Input, DatePicker } from '../form';
-import { OrderForm, Modal } from '../organisms';
 
 const HeroFieldWrapper = styled(Card)`
   display: flex;
@@ -111,12 +110,13 @@ const HeroOrderFormBase = ({
                     {...field}
                     type="number"
                     min="1"
+                    placeholder="45"
                     id={`${id}__person`}
                   />
                 </HeroFieldWrapper>
               )}
             />
-            <HeroFieldWrapper width={['100%', '100%', 'auto']}>
+            <HeroFieldWrapper width={['100%', '100%', 240]}>
               <HeroFieldLabel htmlFor={`${id}__date`}>Дата</HeroFieldLabel>
               <DatePicker name="date" id={`${id}__date`} />
             </HeroFieldWrapper>

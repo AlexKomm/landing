@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 import { Box, Card, Heading, Flex } from 'rebass';
+import { Container } from '../base';
 import withInnerHtml from '../../helpers/withInnerHtml';
 
 const resolveImagePath = image =>
@@ -37,7 +38,7 @@ const HeroSubtitle = withInnerHtml(styled(Box)`
   }
 `);
 
-const Hero = ({ image, title, subtitle, children }) => {
+const Hero = ({ image, title, subtitle, top, children }) => {
   return (
     <Card
       pt={6}
@@ -49,11 +50,14 @@ const Hero = ({ image, title, subtitle, children }) => {
       color="white"
       bg="darkgray"
     >
-      <HeroTitle html={title} as="div" mb={3} fontWeight="500" fontSize={[5, 6]} />
-      <HeroSubtitle html={subtitle} fontSize={[2, 3]} />
-      <Flex mt={4} flexDirection="column">
-        {children}
-      </Flex>
+      <Container>
+        {top()}
+        <HeroTitle html={title} as="div" mb={3} fontWeight="500" fontSize={[5, 6]} />
+        <HeroSubtitle html={subtitle} fontSize={[2, 3]} />
+        <Flex mt={4} flexDirection="column">
+          {children}
+        </Flex>
+      </Container>
     </Card>
   );
 };

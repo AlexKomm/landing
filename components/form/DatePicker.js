@@ -2,15 +2,43 @@ import React from 'react';
 import { connect, getIn } from 'formik';
 import { isValid } from 'date-fns';
 import ru from 'date-fns/locale/ru';
-import DatePickerBase, { registerLocale } from 'react-datepicker';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import styled from 'styled-components';
-import { InputCss } from './Input';
-import 'react-datepicker/dist/react-datepicker.css';
+import { Relative } from '../base';
+import Input from './Input';
+import { CalendarIcon } from '../molecules';
+import '../../static/css/react-datepicker.css';
 
 registerLocale('ru', ru);
 
-const StyledDatePicker = styled(DatePickerBase)`
-  ${InputCss}
+// eslint-disable-next-line react/prefer-stateless-function
+class CustomInputBase extends React.Component {
+  render() {
+    const { className, name, value, onClick } = this.props;
+
+    return (
+      <Relative className={className}>
+        <Input type="text" name={name} defaultValue={value} onClick={onClick} />
+        <CalendarIcon color="green" />
+      </Relative>
+    );
+  }
+}
+
+const StyledCustomInput = styled(CustomInputBase)`
+  ${Input} {
+    padding-right: 25px;
+  }
+
+  ${CalendarIcon} {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 `;
 
 const useDatePicker = (setFieldValue, setFieldTouched, name) => {
@@ -45,7 +73,7 @@ const DatePicker = ({
   const [handleChangeRaw, handleChange] = useDatePicker(setFieldValue, setFieldTouched, name);
 
   return (
-    <StyledDatePicker
+    <ReactDatePicker
       autoComplete="off"
       name={name}
       locale="ru"
@@ -53,6 +81,7 @@ const DatePicker = ({
       onChange={handleChange}
       onChangeRaw={handleChangeRaw}
       onBlur={handleBlur}
+      customInput={<StyledCustomInput />}
       dateFormat={dateFormat}
       {...props}
     />

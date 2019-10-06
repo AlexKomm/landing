@@ -46,7 +46,7 @@ export const InputCss = css`
   `}
 `;
 
-const InputBase = ({ field, ...props }) => <input {...field} {...props} />;
+const InputBase = ({ field, icon, ...props }) => <input {...field} icon={icon} {...props} />;
 
 const Input = styled(InputBase).attrs(props => ({
   error: props.error || null,

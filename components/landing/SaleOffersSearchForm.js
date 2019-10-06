@@ -87,7 +87,6 @@ class SaleOffersSearchForm extends React.Component {
 
   render() {
     const { occasions, formats, menuPreferences, isOptsLoaded } = this.state;
-
     const occasionOptions = occasions.map(renderTermOpts);
     const formatOptions = formats.map(renderTermOpts);
     const preferencesOptions = menuPreferences.map(renderTermOpts);
@@ -142,7 +141,7 @@ class SaleOffersSearchForm extends React.Component {
                       render={({ field }) => (
                         <>
                           <Text htmlFor="person">Кол-во персон</Text>
-                          <Input {...field} id="person" type="text" placeholder="Персон" />
+                          <Input {...field} id="person" type="text" placeholder="45" />
                         </>
                       )}
                       name="person"

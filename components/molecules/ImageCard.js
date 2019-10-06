@@ -3,8 +3,8 @@ import React from 'react';
 import { Card, Heading } from 'rebass';
 import PropTypes from 'prop-types';
 
-const ImageCard = ({ title, ...props }) => (
-  <Card {...props}>
+const ImageCard = ({ className, title, ...props }) => (
+  <Card className={className} {...props}>
     {title && (
       <Heading as="div" fontSize={2}>
         {title}

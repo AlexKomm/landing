@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, Button, Card } from 'rebass';
+import { Flex, Box, Text, Button, Card } from 'rebass';
 import styled, { keyframes, css } from 'styled-components';
 import { variant } from 'styled-system';
 import { themeGet } from '@styled-system/theme-get';
@@ -66,7 +66,7 @@ const UserLinksMenuBase = ({
         </Text>
       )}
       {userLinks.map(link => (
-        <Link variant="blackGreen" href={link.url} title={link.title}>
+        <Link key={link.title} variant="blackGreen" href={link.url} title={link.title}>
           {link.title}
         </Link>
       ))}
@@ -134,23 +134,28 @@ const UserLinksMenu = styled(UserLinksMenuBase)`
 const MainNavigationBase = ({ linkColor, mainNav, ...props }) => (
   <Text {...props} as="nav" role="navigation">
     <Box as="ul">
-      {mainNav.map(navItem => (
-        <Box as="li">
-          <Link variant={linkColor} p="0.5em" href={navItem.url} title={navItem.title}>
-            {navItem.title}
-          </Link>
-        </Box>
-      ))}
+      {mainNav &&
+        mainNav.data &&
+        mainNav.data.map(navItem => (
+          <Box key={navItem.key} as="li">
+            <Link variant={linkColor} p="0.5em" href={navItem.relative} title={navItem.title}>
+              {navItem.title}
+            </Link>
+          </Box>
+        ))}
     </Box>
   </Text>
 );
 
 const MainNavigation = styled(MainNavigationBase)`
+  flex-grow: 2;
+
   ul,
   li {
     list-style: none;
     display: inline-block;
     white-space: nowrap;
+    padding: 0;
   }
 `;
 
@@ -275,14 +280,22 @@ const HeaderBase = ({
             {media.xlarge ? 'Разместить заявку' : '+'}
           </Button>
           {currentUser && (
-            <Box flex="0 0 auto" py={3} onMouseEnter={toggleMenu} onMouseLeave={toggleMenu}>
+            <Flex
+              flex="0 0 auto"
+              flexDirection="column"
+              justifyContent="center"
+              alignSelf="stretch"
+              px={2}
+              onMouseEnter={toggleMenu}
+              onMouseLeave={toggleMenu}
+            >
               <UserIcon icon={currentUser.image} />
               <UserLinksMenu
                 currentUser={currentUser}
                 toggle={showUserMenu}
                 userLinks={userLinks}
               />
-            </Box>
+            </Flex>
           )}
           {!currentUser && <Link href="/user/login">Войти</Link>}
         </HeaderWrapper>

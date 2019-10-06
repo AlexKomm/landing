@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 
-import { getNav } from '../../api/landing';
+import { getMenu } from '../../api/landing';
 
 const NavTree = ({ tree = [], type, children }) => {
   const [navTree, setNavTree] = useState(tree);
 
   useEffect(() => {
     const fetchLinks = async () => {
-      const result = await getNav(null, type);
+      const result = await getMenu(null, type);
 
       setNavTree(result);
     };
 
-    if (!navTree.length) {
+    if (!navTree) {
       fetchLinks();
     }
   }, []);

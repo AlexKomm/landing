@@ -1,12 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Heading } from 'rebass';
+import styled from 'styled-components';
 import SaleOffersGallery from './SaleOffersGallery';
 import SaleOffersSearchForm from './SaleOffersSearchForm';
-
 import { Container } from '../base';
 import { Spinner } from '../organisms';
+import withInnerHtml from '../../helpers/withInnerHtml';
 
 import * as saleOffersApi from '../../api/landing';
+
+const SaleOffersTitleBase = styled(Heading)`
+  .u-strong {
+    font-weight: bold;
+  }
+`;
+
+const SaleOffersTitle = withInnerHtml(SaleOffersTitleBase);
 
 class SaleOffers extends React.Component {
   static propTypes = {
@@ -15,6 +25,8 @@ class SaleOffers extends React.Component {
   };
 
   static defaultProps = {
+    title: 'Выберите и закажите <span class="u-strong">готовое предложение</span>',
+    offers: [],
     initialValues: {},
   };
 
@@ -48,10 +60,18 @@ class SaleOffers extends React.Component {
 
   render() {
     const { isLoading, offers } = this.state;
-    const { initialValues } = this.props;
+    const { initialValues, title } = this.props;
 
     return (
-      <Container>
+      <Container as="section" py={3}>
+        <SaleOffersTitle
+          as="h2"
+          my={3}
+          html={title}
+          fontSize={5}
+          fontWeight="normal"
+          textAlign="center"
+        />
         <SaleOffersSearchForm initialValues={initialValues} onSubmit={this.onSubmit} />
         {isLoading && <Spinner />}
         {!isLoading && offers && <SaleOffersGallery offers={offers} />}

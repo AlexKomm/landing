@@ -8,3 +8,4 @@ export { Position } from './Position';
 export { default as Link } from './Link';
 export { default as Slider } from './Slider';
 export { default as Overlay } from './Overlay';
+export { default as VisuallyHidden } from './VisuallyHidden';

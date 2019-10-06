@@ -81,7 +81,7 @@ const PartnerCard = ({ image, rating, path, ...props }) => (
       css={{ objectFit: 'contain', height: 150, filter: 'grayscale(100%)' }}
     />
     <Text textAlign="center">
-      <Rating rating={rating} mr={2} />
+      <Rating rating={parseFloat(rating, 10)} mr={2} />
       {rating}
     </Text>
   </Card>

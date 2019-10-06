@@ -4,16 +4,18 @@ import transform from '../utils/transform';
 import { getSessionCookie } from '../utils/cookies';
 import parseJsonApi from '../utils/deserialize';
 
-function getBaseUrl(ctx) {
+const getSubdomainFromHostName = hostName => {
+  const hostNameArr = hostName.split('.');
+  return hostNameArr.length > 2 ? hostNameArr[0] : null;
+};
+
+const getHostName = ctx => (ctx && ctx.req ? ctx.req.headers.host : window.location.hostname);
+
+const getBaseUrl = ctx => {
   // Добавляем к API url текущий поддомен
-  const host = ctx && ctx.req ? ctx.req.headers.host : window.location.hostname;
+  const host = getHostName(ctx);
 
-  const extractSubdomain = hostName => {
-    const hostNameArr = hostName.split('.');
-    return hostNameArr.length > 2 ? hostNameArr[0] : null;
-  };
-
-  const subdomain = extractSubdomain(host);
+  const subdomain = getSubdomainFromHostName(host);
 
   let baseURL = process.env.BACKEND_URL;
 
@@ -22,7 +24,33 @@ function getBaseUrl(ctx) {
   }
 
   return baseURL;
-}
+};
+
+export const getMenu = (ctx, menuName) => {
+  const subdomainMenus = ['header', 'footer'];
+
+  let menu = menuName;
+
+  if (subdomainMenus.indexOf(menuName) !== -1) {
+    const host = getHostName(ctx);
+    const subdomain = getSubdomainFromHostName(host);
+
+    if (subdomain) {
+      menu = `${menuName}-${subdomain}`;
+    }
+  }
+  return new Promise((resolve, reject) => {
+    const path = `/api/menu_items/${menu}`;
+
+    return axiosInstance
+      .get(path, { baseURL: getBaseUrl(ctx) })
+      .then(res => {
+        const { status, data = [] } = res;
+        resolve({ status, data: Array.isArray(data) ? data : [] });
+      })
+      .catch(err => reject(err));
+  });
+};
 
 export const getPageData = (ctx, path) => {
   return new Promise((resolve, reject) => {
@@ -33,8 +61,13 @@ export const getPageData = (ctx, path) => {
         const { jsonapi: { individual } = {} } = res.data;
 
         if (individual) {
+          console.log(`Fetching page ${individual}`);
+
           const pageFields = [
+            'drupal_internal__nid',
             'title',
+            'breadcrumbs_normalized',
+            'metatag_normalized',
             'field_landing_title',
             'field_landing_subtitle',
             'field_landing_image',
@@ -44,6 +77,7 @@ export const getPageData = (ctx, path) => {
             'field_landing_partners_title',
             'field_landing_foods',
             'field_landing_body',
+            'field_landing_offers_title',
             'field_event_occasion',
             'field_landing_format',
             'field_people_count',
@@ -199,29 +233,18 @@ export const getSaleOffers = (ctx, values = {}) => {
   });
 };
 
-export const getPage = ctx => {
-  let { query: { path } = {} } = ctx || {};
-
-  if (!path) {
-    path = window.location.pathname;
-  }
-
-  if (path.indexOf('/') !== 0) {
-    path = `/${path}`;
-  }
-
+export const getPage = (ctx, path) => {
   return new Promise((resolve, reject) => {
     Promise.all([
       getPageData(ctx, path),
       getDomainInfo(ctx),
       getCurrentUser(ctx),
       getPublicOccasions(ctx),
-      getNav(ctx, 'footer'),
-      getNav(ctx, 'main'),
-      getSaleOffers(ctx),
+      getMenu(ctx, 'main'),
+      getMenu(ctx, 'footer'),
     ])
       .then(values => {
-        const [page, domain, currentUser, publicOccasions, navTree, mainNav, saleOffers] = values;
+        const [page, domain, currentUser, publicOccasions, mainNav, footerMenu] = values;
 
         resolve({
           page,
@@ -229,9 +252,8 @@ export const getPage = ctx => {
           domain,
           publicOccasions,
           currentUser,
-          navTree,
           mainNav,
-          saleOffers,
+          footerMenu,
         });
       })
       .catch(err => reject(err));
@@ -294,7 +316,7 @@ export const getSaleOfferOccasions = () => {
       )
       .then(res => {
         const jsonApiData = parseJsonApi(res.data);
-        resolve(transform(jsonApiData.data));
+        resolve(jsonApiData.data.map(transform));
       })
       .catch(err => reject(err));
   });
@@ -316,7 +338,7 @@ export const getFormats = () => {
       )
       .then(res => {
         const jsonApiData = parseJsonApi(res.data);
-        resolve(transform(jsonApiData.data));
+        resolve(jsonApiData.data.map(transform));
       })
       .catch(err => reject(err));
   });
@@ -338,7 +360,7 @@ export const getMenuPreferences = () => {
       )
       .then(res => {
         const jsonApiData = parseJsonApi(res.data);
-        resolve(transform(jsonApiData.data));
+        resolve(jsonApiData.data.map(transform));
       })
       .catch(err => reject(err));
   });

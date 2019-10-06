@@ -15,9 +15,11 @@ const FormError = ({ name, ...props }) => (
 );
 
 const AcceptText = props => (
-  <Text {...props}>
+  <Text color="grey" {...props}>
     Я согласен с обработкой моих персональных данных в соответствии с&nbsp;
-    <Link href="/privacy">политикой конфиденциальности</Link>
+    <Link href="/privacy" target="_blank">
+      политикой конфиденциальности
+    </Link>
   </Text>
 );
 

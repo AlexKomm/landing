@@ -14,3 +14,4 @@ export { default as FeedbackSlider } from './FeedbackSlider';
 export { default as Body } from './Body';
 export { default as ShareLinks } from './ShareLinks';
 export { default as HeroOrderForm } from './HeroOrderForm';
+export { default as LandingEdit } from './LandingEdit';

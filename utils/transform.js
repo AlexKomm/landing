@@ -32,12 +32,16 @@ const transforms = {
 
     return {
       id: data.id,
+      nid: data.drupalInternalNid,
       title: attributes.title,
+      breadcrumbs: data.breadcrumbsNormalized || [],
+      meta: data.metatagNormalized || [],
       body,
       heroTitle: attributes.field_landing_title[0].value,
       heroSubtitle: attributes.field_landing_subtitle[0].value,
       heroImage: attributes.field_landing_image[0],
       formats,
+      landingOffersTitle: data.fieldLandingOffersTitle,
       formatsTitle: data.fieldLandingFormatsTitle,
       stepsTitle: data.fieldLandingStepsTitle.value,
       partnersTitle: data.fieldlandingPartnersTitle ? data.fieldlandingPartnersTitle.value : null,
@@ -88,7 +92,7 @@ const transforms = {
       nid: data.drupalInternalNid,
       title: data.title,
       price: parseInt(data.fieldOfferTotal, 10),
-      rating: parseFloat(data.uid.fieldRating),
+      rating: parseFloat(data.uid.fieldRating, 10),
       feedbackCount: 25, // TODO пока не поддерживается на бэкенде
       photo: getImagePath('offer_sale_small_ret', data.fieldOfferPhoto),
     };
@@ -106,10 +110,19 @@ const transforms = {
       uuid: data.id,
       uid: data.drupalInternalUid,
       name: data.fieldName,
-      rating: data.fieldRating,
+      rating: parseFloat(data.fieldRating, 10),
       path: path || `/user/${data.drupalInternalUid}`,
       image: getImagePath('user_photo', data.fieldUserImage),
       roles,
+    };
+  },
+  'menu_link_content--menu_link_content': data => {
+    return {
+      title: data.title,
+      href: data.hrefAlias,
+      weight: data.weight,
+      parent: data.parent,
+      menu: data.menuName,
     };
   },
 };

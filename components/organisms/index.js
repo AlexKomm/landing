@@ -8,3 +8,4 @@ export { default as OrderForm } from './OrderForm';
 export { default as Modal } from './Modal';
 export { default as NavTree } from './NavTree';
 export { default as FooterNav } from './FooterNav';
+export { default as Breadcrumbs } from './Breadcrumbs';

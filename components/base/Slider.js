@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Box } from 'rebass';
 
 const Slider = styled(Box)`
+  text-align: center;
   white-space: nowrap;
   overflow-x: auto;
   overflow-y: hidden;

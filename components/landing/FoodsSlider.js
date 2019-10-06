@@ -8,7 +8,7 @@ const FoodsSlider = ({ foods, ...props }) => {
   const cards = foods.map(food => (
     <ImageCard
       key={food.title}
-      css={{ width: '230px', height: '175px' }}
+      css={{ textAlign: 'left', width: '230px', height: '175px' }}
       backgroundImage={`url(${food.image})`}
       title={food.title}
     />

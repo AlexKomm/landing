@@ -16,6 +16,7 @@ export {
   InstagramIcon,
   VkIcon,
   FbIcon,
+  CalendarIcon,
   UserIconPlaceholder,
 } from './Icons';
 export { default as Logo } from './Logo';

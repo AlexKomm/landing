@@ -38,10 +38,10 @@ const ExpandCategoryBase = ({ className, menuItem, ...props }) => {
 
   let menuLinks = [];
 
-  if (menuItem.below.length > 0) {
+  if (menuItem.below && menuItem.below.length > 0) {
     menuLinks = menuItem.below.map(subMenu => (
       <Box as="li">
-        <MenuLink variant="whiteBlack" key={subMenu.id} href={subMenu.url}>
+        <MenuLink variant="whiteBlack" key={subMenu.id} href={subMenu.relative}>
           {subMenu.title}
         </MenuLink>
       </Box>
@@ -51,7 +51,7 @@ const ExpandCategoryBase = ({ className, menuItem, ...props }) => {
   return (
     <Box as="li" className={className} {...props}>
       <ExpandLink mb={2}>
-        <MenuLink variant="whiteBlack" title={menuItem.title} href={menuItem.url}>
+        <MenuLink variant="whiteBlack" title={menuItem.title} href={menuItem.relative}>
           {menuItem.title}
         </MenuLink>
         {menuLinks.length > 0 && !isExpanded && (
@@ -136,42 +136,45 @@ const FooterNavBase = ({ className, tree, ...props }) => {
         {navTree => {
           return (
             <Flex className={className} justifyContent="space-between" flexWrap="wrap">
-              {navTree.map(category => {
-                return (
-                  <Box key={category.id} px={3} width={['50%', '33.3%', '16.6%']} mb={3}>
-                    <CategoryLink
-                      variant="blackWhite"
-                      title={category.title}
-                      href={category.url}
-                      mb={4}
-                    >
-                      {category.title}
-                    </CategoryLink>
-
-                    <Box as="ul">
-                      {category.below.map((menuItem, i) => {
-                        if (fullList || i < visibleLinks) {
-                          return <ExpandCategory menuItem={menuItem} />;
-                        }
-
-                        return null;
-                      })}
-                    </Box>
-                    {!fullList && (
-                      <Text
-                        as="span"
-                        color="white"
-                        fontSize={0}
-                        fontWeight="bold"
-                        css={{ cursor: 'pointer' }}
-                        onClick={() => setFullList(true)}
+              {navTree &&
+                navTree.data &&
+                navTree.data.map(category => {
+                  return (
+                    <Box key={category.key} px={3} width={['50%', '33.3%', '16.6%']} mb={3}>
+                      <CategoryLink
+                        variant="blackWhite"
+                        title={category.title}
+                        href={category.relative}
+                        mb={4}
                       >
-                        Еще...
-                      </Text>
-                    )}
-                  </Box>
-                );
-              })}
+                        {category.title}
+                      </CategoryLink>
+
+                      <Box as="ul">
+                        {category.below &&
+                          category.below.map((menuItem, i) => {
+                            if (fullList || i < visibleLinks) {
+                              return <ExpandCategory key={menuItem.key} menuItem={menuItem} />;
+                            }
+
+                            return null;
+                          })}
+                      </Box>
+                      {!fullList && (
+                        <Text
+                          as="span"
+                          color="white"
+                          fontSize={0}
+                          fontWeight="bold"
+                          css={{ cursor: 'pointer' }}
+                          onClick={() => setFullList(true)}
+                        >
+                          Еще...
+                        </Text>
+                      )}
+                    </Box>
+                  );
+                })}
             </Flex>
           );
         }}
